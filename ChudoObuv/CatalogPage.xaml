@@ -5,45 +5,85 @@
     <Page.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
     </Page.Resources>
-    <ListBox x:Name="ProductsList"
-             HorizontalContentAlignment="Stretch"
-             ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-        <ListBox.ItemContainerStyle>
-            <Style TargetType="ListBoxItem">
-                <Setter Property="Margin" Value="8,4" />
-                <Setter Property="Padding" Value="0" />
-            </Style>
-        </ListBox.ItemContainerStyle>
-        <ListBox.ItemTemplate>
-            <DataTemplate>
-                <Border Background="{Binding RowBackground}"
-                        BorderBrush="Gray" BorderThickness="1" Padding="8">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="140" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="160" />
-                        </Grid.ColumnDefinitions>
-                        <Image Source="{Binding ImagePath}" Height="120" Stretch="Uniform" />
-                        <StackPanel Grid.Column="1" Margin="12,0">
-                            <TextBlock Text="{Binding Title}" FontSize="18"
-                                       FontWeight="SemiBold" TextWrapping="Wrap" />
-                            <TextBlock Text="{Binding Category}" Margin="0,6,0,0" />
-                            <TextBlock Text="{Binding QuantityText, StringFormat='Количество: {0}'}" />
-                            <TextBlock Text="{Binding Composition}" FontSize="11"
-                                       TextWrapping="Wrap" />
-                        </StackPanel>
-                        <StackPanel Grid.Column="2" VerticalAlignment="Center">
-                            <TextBlock Text="{Binding OldPrice, StringFormat='{}{0:N0} ₽'}"
-                                       TextDecorations="Strikethrough" Foreground="Gray"
-                                       Visibility="{Binding HasDiscount,
-                                           Converter={StaticResource BoolToVisibility}}" />
-                            <TextBlock Text="{Binding FinalPrice, StringFormat='{}{0:N0} ₽'}"
-                                       FontSize="22" FontWeight="Bold" />
-                        </StackPanel>
-                    </Grid>
-                </Border>
-            </DataTemplate>
-        </ListBox.ItemTemplate>
-    </ListBox>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid x:Name="FilterPanel" Margin="8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="220" />
+                <ColumnDefinition Width="220" />
+            </Grid.ColumnDefinitions>
+            <StackPanel>
+                <TextBlock Text="Поиск по наименованию и описанию" Margin="0,0,0,2" />
+                <TextBox x:Name="SearchTextBox" MaxLength="100"
+                         TextChanged="SearchTextBox_TextChanged" />
+            </StackPanel>
+            <StackPanel Grid.Column="1" Margin="8,0,0,0">
+                <TextBlock Text="Сортировка по цене" Margin="0,0,0,2" />
+                <ComboBox x:Name="SortComboBox" SelectedIndex="0"
+                          SelectionChanged="SortComboBox_SelectionChanged">
+                    <ComboBoxItem Content="Без сортировки" />
+                    <ComboBoxItem Content="По возрастанию" />
+                    <ComboBoxItem Content="По убыванию" />
+                </ComboBox>
+            </StackPanel>
+            <StackPanel Grid.Column="2" Margin="8,0,0,0">
+                <TextBlock Text="Категория" Margin="0,0,0,2" />
+                <ComboBox x:Name="CategoryComboBox"
+                          SelectionChanged="CategoryComboBox_SelectionChanged" />
+            </StackPanel>
+        </Grid>
+
+        <ListBox x:Name="ProductsList" Grid.Row="1"
+                 HorizontalContentAlignment="Stretch"
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                 VirtualizingPanel.ScrollUnit="Pixel">
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="Margin" Value="8,4" />
+                    <Setter Property="Padding" Value="0" />
+                </Style>
+            </ListBox.ItemContainerStyle>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Border Background="{Binding RowBackground}"
+                            BorderBrush="Gray" BorderThickness="1" Padding="8">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="140" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="160" />
+                            </Grid.ColumnDefinitions>
+                            <Image Source="{Binding ImagePath}" Height="120" Stretch="Uniform" />
+                            <StackPanel Grid.Column="1" Margin="12,0">
+                                <TextBlock Text="{Binding Title}" FontSize="18"
+                                           FontWeight="SemiBold" TextWrapping="Wrap" />
+                                <TextBlock Text="{Binding Category}" Margin="0,6,0,0" />
+                                <TextBlock Text="{Binding QuantityText, StringFormat='Количество: {0}'}" />
+                                <TextBlock Text="{Binding Composition}" FontSize="11"
+                                           TextWrapping="Wrap" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                                <TextBlock Text="{Binding OldPrice, StringFormat='{}{0:N0} ₽'}"
+                                           TextDecorations="Strikethrough" Foreground="Gray"
+                                           Visibility="{Binding HasDiscount,
+                                               Converter={StaticResource BoolToVisibility}}" />
+                                <TextBlock Text="{Binding FinalPrice, StringFormat='{}{0:N0} ₽'}"
+                                           FontSize="22" FontWeight="Bold" />
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <TextBlock x:Name="EmptyText" Grid.Row="1" Visibility="Collapsed"
+                   Text="Ничего не найдено. Измените строку поиска или категорию."
+                   FontSize="16" Foreground="Gray" HorizontalAlignment="Center"
+                   VerticalAlignment="Center" TextWrapping="Wrap" />
+    </Grid>
 </Page>

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using ChudoObuv.Models;
 using System.IO;
 using System.Linq;
 using System.Windows.Media;
+using ChudoObuv.Models;
 
 namespace ChudoObuv;
 
@@ -23,6 +23,7 @@ public static class CatalogService
         {
             p.Image,
             p.ProductName,
+            p.Description,
             p.Composition,
             p.Price,
             Manufacturer = p.Manufacturer.ManufacturerName,
@@ -38,7 +39,9 @@ public static class CatalogService
             return new CatalogItem
             {
                 ImagePath = GetImagePath(r.Image),
+                ProductName = r.ProductName,
                 Title = $"{r.Manufacturer} | {r.ProductName}",
+                Description = r.Description ?? "",
                 Category = r.Category,
                 QuantityText = r.Total > ManyPairsLimit ? "много" : "мало",
                 Composition = r.Composition ?? "",
@@ -50,6 +53,12 @@ public static class CatalogService
                     : Brushes.White
             };
         }).ToList();
+    }
+
+    public static List<string> GetCategoryNames()
+    {
+        using var db = new AppDbContext();
+        return db.Categories.OrderBy(c => c.CategoryName).Select(c => c.CategoryName).ToList();
     }
 
     private static string GetImagePath(string? imageName)
