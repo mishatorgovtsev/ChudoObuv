@@ -1,0 +1,47 @@
+﻿<Page x:Class="ChudoObuv.OrderPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Title="Оформление заказа">
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <TextBlock x:Name="OrderDateText" FontSize="16" />
+
+        <DataGrid x:Name="LinesGrid" Grid.Row="1" Margin="0,8"
+                  AutoGenerateColumns="False" IsReadOnly="True"
+                  CanUserAddRows="False" SelectionMode="Single"
+                  HeadersVisibility="Column">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Товар" Binding="{Binding ProductTitle}" Width="*" />
+                <DataGridTextColumn Header="Размер"
+                                    Binding="{Binding SizeValue, StringFormat='{}{0:0.#}'}" Width="80" />
+                <DataGridTextColumn Header="Количество" Binding="{Binding Quantity}" Width="100" />
+                <DataGridTextColumn Header="Цена за пару"
+                                    Binding="{Binding UnitPrice, StringFormat='{}{0:N0} ₽'}" Width="120" />
+                <DataGridTextColumn Header="Сумма"
+                                    Binding="{Binding Total, StringFormat='{}{0:N0} ₽'}" Width="120" />
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <TextBlock x:Name="EmptyText" Grid.Row="1" Text="В заказе пока нет товаров. Вернитесь в каталог и добавьте модели."
+                   FontSize="16" Foreground="Gray" HorizontalAlignment="Center"
+                   VerticalAlignment="Center" TextWrapping="Wrap" Visibility="Collapsed" />
+
+        <TextBlock x:Name="TotalText" Grid.Row="2" FontSize="20" FontWeight="Bold"
+                   HorizontalAlignment="Right" Margin="0,0,0,8" />
+
+        <DockPanel Grid.Row="3">
+            <Button DockPanel.Dock="Left" Content="Убрать выбранную позицию"
+                    Padding="12,6" Click="RemoveButton_Click" />
+            <Button DockPanel.Dock="Right" Content="Подтвердить заказ"
+                    Padding="16,6" Margin="8,0,0,0" Click="ConfirmButton_Click" />
+            <Button DockPanel.Dock="Right" Content="Отказаться от заказа"
+                    Padding="16,6" HorizontalAlignment="Right" Click="CancelButton_Click" />
+        </DockPanel>
+    </Grid>
+</Page>
