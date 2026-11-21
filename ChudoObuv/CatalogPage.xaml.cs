@@ -20,16 +20,15 @@ public partial class CatalogPage : Page
     {
         InitializeComponent();
         FilterPanel.Visibility = AppSession.IsAuthorized ? Visibility.Visible : Visibility.Collapsed;
-        LoadCatalog();
+        LoadCategories();
         isReady = true;
-        ApplyFilters();
+        Loaded += (_, _) => RefreshCatalog();
     }
 
-    private void LoadCatalog()
+    private void LoadCategories()
     {
         try
         {
-            allItems = CatalogService.GetCatalog();
             var categories = new List<string> { AllCategories };
             categories.AddRange(CatalogService.GetCategoryNames());
             CategoryComboBox.ItemsSource = categories;
@@ -37,9 +36,23 @@ public partial class CatalogPage : Page
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"Не удалось загрузить каталог: {ex.Message}",
-                "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            ShowLoadError(ex);
         }
+    }
+
+    private void RefreshCatalog()
+    {
+        try
+        {
+            allItems = CatalogService.GetCatalog();
+        }
+        catch (Exception ex)
+        {
+            ShowLoadError(ex);
+        }
+
+        ApplyFilters();
+        OrderButton.Content = $"Заказ ({OrderCart.Lines.Sum(l => l.Quantity)})";
     }
 
     private void ApplyFilters()
@@ -72,6 +85,12 @@ public partial class CatalogPage : Page
         EmptyText.Visibility = result.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
     }
 
+    private static void ShowLoadError(Exception ex)
+    {
+        MessageBox.Show($"Не удалось загрузить каталог: {ex.Message}",
+            "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+    }
+
     private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
     {
         if (isReady) ApplyFilters();
@@ -86,11 +105,17 @@ public partial class CatalogPage : Page
     {
         if (isReady) ApplyFilters();
     }
+
     private void ProductItem_Click(object sender, MouseButtonEventArgs e)
     {
         if (sender is ListBoxItem { DataContext: CatalogItem item })
         {
             NavigationService.Navigate(new ProductPage(item.ProductId));
         }
+    }
+
+    private void OrderButton_Click(object sender, RoutedEventArgs e)
+    {
+        NavigationService.Navigate(new OrderPage());
     }
 }
