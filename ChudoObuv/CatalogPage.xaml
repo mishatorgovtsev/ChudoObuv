@@ -46,6 +46,8 @@
                 <Style TargetType="ListBoxItem">
                     <Setter Property="Margin" Value="8,4" />
                     <Setter Property="Padding" Value="0" />
+                    <Setter Property="Cursor" Value="Hand" />
+                    <EventSetter Event="PreviewMouseLeftButtonUp" Handler="ProductItem_Click" />
                 </Style>
             </ListBox.ItemContainerStyle>
             <ListBox.ItemTemplate>

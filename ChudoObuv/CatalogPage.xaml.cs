@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace ChudoObuv;
 
@@ -84,5 +85,12 @@ public partial class CatalogPage : Page
     private void CategoryComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (isReady) ApplyFilters();
+    }
+    private void ProductItem_Click(object sender, MouseButtonEventArgs e)
+    {
+        if (sender is ListBoxItem { DataContext: CatalogItem item })
+        {
+            NavigationService.Navigate(new ProductPage(item.ProductId));
+        }
     }
 }
