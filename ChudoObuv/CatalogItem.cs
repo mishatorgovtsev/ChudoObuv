@@ -5,6 +5,7 @@ namespace ChudoObuv;
 public class CatalogItem
 {
     public string ImagePath { get; init; } = "";
+    public int ProductId { get; init; }
     public string ProductName { get; init; } = "";
     public string Title { get; init; } = "";
     public string Description { get; init; } = "";
