@@ -12,7 +12,15 @@ public static class AppSession
         ? "Гость"
         : $"{CurrentUser.Surname} {CurrentUser.Name} {CurrentUser.Patronymic}";
 
-    public static void SignIn(User user) => CurrentUser = user;
+    public static void SignIn(User user)
+    {
+        CurrentUser = user;
+        OrderCart.Clear();
+    }
 
-    public static void SignOut() => CurrentUser = null;
+    public static void SignOut()
+    {
+        CurrentUser = null;
+        OrderCart.Clear();
+    }
 }
