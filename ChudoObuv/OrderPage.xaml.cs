@@ -13,7 +13,26 @@ public partial class OrderPage : Page
     {
         InitializeComponent();
         OrderDateText.Text = $"Дата заказа: {DateTime.Today:dd.MM.yyyy}";
+        LoadClients();
         RefreshLines();
+    }
+
+    private void LoadClients()
+    {
+        if (!AppSession.CanManageOrders)
+        {
+            return;
+        }
+
+        try
+        {
+            ClientComboBox.ItemsSource = OrderService.GetClients();
+            ClientPanel.Visibility = Visibility.Visible;
+        }
+        catch (Exception ex)
+        {
+            Show($"Не удалось загрузить список клиентов: {ex.Message}", "Ошибка", MessageBoxImage.Error);
+        }
     }
 
     private void RefreshLines()
@@ -67,6 +86,19 @@ public partial class OrderPage : Page
             return;
         }
 
+        var clientId = AppSession.CurrentUser!.UserId;
+        if (AppSession.CanManageOrders)
+        {
+            if (ClientComboBox.SelectedItem is not ClientOption client)
+            {
+                Show("Выберите клиента, на которого оформляется заказ.",
+                    "Оформление заказа", MessageBoxImage.Warning);
+                return;
+            }
+
+            clientId = client.UserId;
+        }
+
         var answer = MessageBox.Show($"Подтвердить заказ на сумму {OrderCart.Lines.Sum(l => l.Total):N0} ₽?",
             "Подтверждение заказа", MessageBoxButton.YesNo, MessageBoxImage.Question);
         if (answer != MessageBoxResult.Yes)
@@ -76,7 +108,7 @@ public partial class OrderPage : Page
 
         try
         {
-            if (!TrySaveOrder(out var orderId, out var error))
+            if (!TrySaveOrder(clientId, out var orderId, out var error))
             {
                 Show(error, "Заказ не оформлен", MessageBoxImage.Warning);
                 return;
@@ -92,7 +124,7 @@ public partial class OrderPage : Page
         }
     }
 
-    private static bool TrySaveOrder(out int orderId, out string error)
+    private static bool TrySaveOrder(int clientId, out int orderId, out string error)
     {
         orderId = 0;
         error = "";
@@ -123,7 +155,7 @@ public partial class OrderPage : Page
         {
             OrderId = orderId,
             OrderDate = DateOnly.FromDateTime(DateTime.Today),
-            UserId = AppSession.CurrentUser!.UserId
+            UserId = clientId
         });
 
         foreach (var (line, stock) in pairs)

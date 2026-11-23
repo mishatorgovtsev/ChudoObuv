@@ -10,7 +10,14 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <TextBlock x:Name="OrderDateText" FontSize="16" />
+        <StackPanel>
+            <TextBlock x:Name="OrderDateText" FontSize="16" />
+            <StackPanel x:Name="ClientPanel" Margin="0,8,0,0" Visibility="Collapsed">
+                <TextBlock Text="Клиент" />
+                <ComboBox x:Name="ClientComboBox" DisplayMemberPath="FullName"
+                          Width="320" HorizontalAlignment="Left" />
+            </StackPanel>
+        </StackPanel>
 
         <DataGrid x:Name="LinesGrid" Grid.Row="1" Margin="0,8"
                   AutoGenerateColumns="False" IsReadOnly="True"

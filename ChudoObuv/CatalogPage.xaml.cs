@@ -20,6 +20,7 @@ public partial class CatalogPage : Page
     {
         InitializeComponent();
         FilterPanel.Visibility = AppSession.IsAuthorized ? Visibility.Visible : Visibility.Collapsed;
+        OrdersButton.Visibility = AppSession.CanManageOrders ? Visibility.Visible : Visibility.Collapsed;
         LoadCategories();
         isReady = true;
         Loaded += (_, _) => RefreshCatalog();
@@ -117,5 +118,9 @@ public partial class CatalogPage : Page
     private void OrderButton_Click(object sender, RoutedEventArgs e)
     {
         NavigationService.Navigate(new OrderPage());
+    }
+    private void OrdersButton_Click(object sender, RoutedEventArgs e)
+    {
+        NavigationService.Navigate(new OrdersPage());
     }
 }
